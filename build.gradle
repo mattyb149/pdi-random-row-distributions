@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'antlr'
 apply plugin: 'eclipse'
 
 // Keep Java source compatibility at 1.6 unless you absolutely need 7+ features, as this will 
@@ -10,22 +11,35 @@ sourceCompatibility = JavaVersion.VERSION_1_6
 // release tag
 project.ext.kettle_dependency_revision = 'TRUNK-SNAPSHOT'
 project.ext.metastore_dependency_revision = 'TRUNK-SNAPSHOT'
-
 buildscript {
     repositories {
+        maven {
+            name 'JFrog OSS snapshot repo'
+            url  'https://oss.jfrog.org/oss-snapshot-local/'
+        }
+        jcenter()
         mavenCentral()
     }
+
     dependencies {
+        classpath 'me.champeau.gradle:antlr4-gradle-plugin:0.1-SNAPSHOT'
         classpath group: 'net.carlosgsouza', name: 'gradle-console', version: '1.0'
     }
 }
 
+repositories {
+   jcenter()
+}
+
+apply plugin: 'antlr4'
 apply plugin: 'console'
 
 // This adds the Pentaho repositories and Maven Central. The official list of repos is currently
 // kept in GitHub at pentaho/subfloor/master-copies/ivysettings.xml, but if we move to Maven
 // you will want to see the common POM.
 project.repositories {
+  mavenLocal()
+  mavenCentral()
   
   ivy {
     url "http://repo.pentaho.org/artifactory/repo/"
@@ -38,13 +52,12 @@ project.repositories {
   maven {
     url 'http://repo.pentaho.org/artifactory/repo'
   }
-  mavenLocal()
-  mavenCentral()
+  
 }
 
 configurations {
   runtimeWithoutCompile {
-    transitive = false
+    transitive = true
   }
   zip
 }
@@ -59,13 +72,25 @@ dependencies {
   
  
   // Put runtime dependencies here using the runtime() directive. Example:
-  //  runtime("com.tinkerpop.gremlin:gremlin-groovy:${project.ext.blueprints_dependency_revision}")
+  
   
   // Put runtime overrides of compile-time dependencies here. Often this will include the runtime() dependencies plus
   // any overrides of JARs in the normal Kettle classloader. Example:
   compile fileTree(dir: 'lib-dist', include: '*.jar')
   runtimeWithoutCompile fileTree(dir: 'lib-dist', include: '*.jar')
   
+  testCompile 'junit:junit:4.10'
+}
+
+// make the Java compile task depend on the antlr4 task
+compileJava.dependsOn antlr4
+
+// add the generated source files to the list of java sources
+sourceSets.main.java.srcDirs += antlr4.output
+
+// add antlr4 to classpath
+configurations {
+   compile.extendsFrom antlr4
 }
 
 // This task builds a PDI plugin in the correct format, a ZIP with the plugin JAR at the root and a lib/ folder containing

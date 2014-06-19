@@ -320,7 +320,7 @@
     <type>Append</type>
     <description/>
     <distribute>Y</distribute>
-    <custom_distribution/>
+    <custom_distribution>Markov</custom_distribution>
     <copies>1</copies>
          <partitioning>
            <method>none</method>
@@ -360,7 +360,7 @@
     <type>RowGenerator</type>
     <description/>
     <distribute>Y</distribute>
-    <custom_distribution>Random</custom_distribution>
+    <custom_distribution>Markov</custom_distribution>
     <copies>1</copies>
          <partitioning>
            <method>none</method>
@@ -380,7 +380,7 @@
         <set_empty_string>N</set_empty_string>
       </field>
     </fields>
-    <limit>10</limit>
+    <limit>100</limit>
     <never_ending>N</never_ending>
     <interval_in_ms>5000</interval_in_ms>
     <row_time_field>now</row_time_field>

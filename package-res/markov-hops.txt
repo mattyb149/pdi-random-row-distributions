@@ -1,0 +1,7 @@
+"test-random-row" {
+    "Generate Zeroes" -[0.01]-> "Add 1"
+    "Generate Zeroes" -[0.01]-> "Add 2"
+    "Generate Zeroes" -[0.08]-> "Add 3"
+    "Generate Zeroes" -[0.90]-> "Add 4"
+    "Append streams 3" -[1.0]-> "END"
+}
